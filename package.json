@@ -1,0 +1,15 @@
+{
+  "name": "d3tz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "start": "tsc -w | serve src"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4",
+    "serve": "^14.0.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
