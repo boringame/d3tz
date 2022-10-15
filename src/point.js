@@ -2,6 +2,7 @@ const { sin, cos, } = Math;
 export const pointDimX = 0;
 export const pointDimY = 1;
 export const pointDimZ = 2;
+export const pointMin = Number.MIN_SAFE_INTEGER;
 export const pointD3RotateZ = (point, deg) => {
     const degP = deg * Math.PI / 180;
     const degPSin = sin(degP);

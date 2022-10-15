@@ -32,16 +32,3 @@ export const cubePlanes = [
         }
     }
 }
-export const cubeFaceRowLen = 3;
-export const cubeFaceColLen = 3;
-/**
- * 立方体的纹理
- */
-export const cubeFaces = [
-    [[0, 0, 0], [0, 1, 0], [0, 0, 0]],
-    [[0, 0, 1], [0, 0, 0], [1, 0, 0]],
-    [[0, 0, 1], [0, 1, 0], [1, 0, 0]],
-    [[1, 0, 1], [0, 0, 0], [1, 0, 1]],
-    [[1, 0, 1], [0, 1, 0], [1, 0, 1]],
-    [[1, 0, 1], [1, 0, 1], [1, 0, 1]],
-];

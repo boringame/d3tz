@@ -1,4 +1,5 @@
-import { cubeSize, cubePlanes, cubeFaces, cubeFaceColLen, cubeFaceRowLen } from "./cube.js";
+import { cubeSize, cubePlanes, } from "./cube.js";
+import { cubeFaces, cubeFaceColLen, cubeFaceRowLen, cubeFaceColorW, cubeFaceColorB } from "./face.js";
 import { planeDimNormalVector, planeDimO, planeDimM, planeDimN } from "./plane.js";
 import { pointDimX, pointDimY, pointDimZ } from "./point.js";
 import { screenScaleX, cameraZ, screenScaleY } from "./screen.js";
@@ -52,6 +53,7 @@ export const rayCube = cubePlanes.map((plane, faceKey) => {
         }
     })());
     return {
+        faceKey,
         plane,
         face,
         normalVector,
@@ -79,8 +81,8 @@ export const rayCube = cubePlanes.map((plane, faceKey) => {
                         }
                     }
                     const color = faceCell == 0 ?
-                        [255, 255, 255, 255] :
-                        [255, 0, 0, 255];
+                        cubeFaceColorW :
+                        cubeFaceColorB;
                     return {
                         point,
                         normalVector,

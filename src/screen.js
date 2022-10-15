@@ -2,7 +2,7 @@ import { cubeSize } from "./cube.js";
 /**
  * 控制屏幕的尺寸
  */
-export const screenWh = 360;
+export const screenWh = 240;
 export const screenWidth = screenWh;
 export const screenHeight = screenWh;
 export const screenScaleX = screenWidth / 2 / cubeSize;

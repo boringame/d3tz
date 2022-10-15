@@ -1,5 +1,6 @@
 import { ColorRgb } from "./color.js";
-import { cubeSize, cubePlanes, cubeFaces, cubeFaceColLen, cubeFaceRowLen } from "./cube.js";
+import { cubeSize, cubePlanes, } from "./cube.js";
+import { cubeFaces, cubeFaceColLen, cubeFaceRowLen, cubeFaceColorW, cubeFaceColorB } from "./face.js";
 import { planeDimNormalVector, planeDimO, planeDimM, planeDimN } from "./plane.js";
 import { pointDimX, pointDimY, pointDimZ, PointD3 } from "./point.js";
 import { screenScaleX, cameraZ, screenScaleY } from "./screen.js";
@@ -9,8 +10,6 @@ const { trunc, pow, } = Math;
  * 渲染时的位置
  */
 export const rayTZ = 0;
-
-
 
 /**
  * 控制扫描的精细度
@@ -70,6 +69,7 @@ export const rayCube = cubePlanes.map((plane, faceKey) => {
   })());
 
   return {
+    faceKey,
     plane,
     face,
     normalVector,
@@ -102,9 +102,9 @@ export const rayCube = cubePlanes.map((plane, faceKey) => {
             }
           }
 
-          const color: ColorRgb = faceCell == 0 ?
-            [255, 255, 255, 255] :
-            [255, 0, 0, 255];
+          const color = faceCell == 0 ?
+            cubeFaceColorW :
+            cubeFaceColorB;
 
           return {
             point,

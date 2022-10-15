@@ -7,6 +7,8 @@ export const pointDimX = 0;
 export const pointDimY = 1;
 export const pointDimZ = 2;
 
+export const pointMin = Number.MIN_SAFE_INTEGER;
+
 /**
  * 立体位置
  */

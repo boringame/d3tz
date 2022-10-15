@@ -1,5 +1,6 @@
-import { ColorRgb, colorLight } from "./color.js";
-import { NormalVector, pointD3RotateY, pointDimZ, PointD3, pointDimX, pointDimY } from "./point.js";
+import { colorLight, colorEmpty, colorOver, colorCellMax } from "./color.js";
+import { cubeFaceColorWA } from "./face.js";
+import { pointD3RotateY, pointDimZ, pointDimX, pointDimY, pointMin } from "./point.js";
 import { rayCube, rayTZ } from "./ray.js";
 import { ScreenBuf, screenHeight, screenWidth, cameraZ, screenScaleX, screenScaleY, screenTX, screenTY } from "./screen.js";
 
@@ -13,29 +14,29 @@ export const calc = (
 ) => {
 
   const screenBuf: ScreenBuf = Array.from({ length: screenHeight },
-    () => Array.from({ length: screenWidth, }, () => [0, 0, 0, 0] as ColorRgb)
+    () => Array.from({ length: screenWidth, }, () => colorEmpty)
   );
 
   const zBuf = Array.from({ length: screenHeight },
-    () => Array.from({ length: screenWidth, }, () => Number.MIN_SAFE_INTEGER)
+    () => Array.from({ length: screenWidth, }, () => pointMin)
   );
 
   for (const face of rayCube) {
 
     //面的法向量
-    let normalVector: NormalVector = face.normalVector;
+    let normalVector = face.normalVector;
 
     normalVector = pointD3RotateY(normalVector, deg);
     const normalVectorZ = normalVector[pointDimZ];
 
     //反面不显示
-    if (normalVectorZ < 0) {
+    if (normalVectorZ < 0 && cubeFaceColorWA >= colorCellMax) {
       continue;
     }
 
     for (const row of face.rows) {
       for (const col of row.cols) {
-        let point: PointD3 = col.point;
+        let point = col.point;
 
         //旋转
         point = pointD3RotateY(point, deg);
@@ -62,23 +63,36 @@ export const calc = (
           continue;
         }
 
-        const drawZ = point[pointDimZ];
-        //被遮盖
-        if (drawZ <= zBuf[screenY][screenX]) {
-          continue;
-        }
-        //记录最上方的点层级
-        zBuf[screenY][screenX] = drawZ;
-
-        //反面不显示
-        if (normalVectorZ < 0) {
-          continue;
-        }
-
         let color = col.color;
+
+        //层级
+        const overZ = point[pointDimZ];
+        const overZLast = zBuf[screenY][screenX];
+        if (overZ < overZLast && cubeFaceColorWA >= colorCellMax) {
+          continue;
+        }
 
         //计算亮度
         color = colorLight(color, normalVectorZ);
+
+        if (overZ > overZLast) {
+          zBuf[screenY][screenX] = overZ;
+
+          if (cubeFaceColorWA < colorCellMax) {
+            const lastColor = screenBuf[screenY][screenX];
+            if (!!lastColor) {
+              color = colorOver(lastColor, color);
+            }
+          }
+        } else {
+
+          if (cubeFaceColorWA < colorCellMax) {
+            const lastColor = screenBuf[screenY][screenX];
+            if (!!lastColor) {
+              color = colorOver(color, lastColor);
+            }
+          }
+        }
 
         screenBuf[screenY][screenX] = color;
       }

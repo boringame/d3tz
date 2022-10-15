@@ -11,7 +11,7 @@ const { trunc, } = Math;
 const main = async () => {
 
   const frameUnit = 1000 / 60;
-  const frameDeg = -45 / frameUnit;
+  const frameDeg = 45 / frameUnit;
   const timeBegin = Date.now();
   let timeLast = timeBegin;
   let countDeg = 0;
