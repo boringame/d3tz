@@ -11,7 +11,7 @@ export const colorDimLen = 4;
 export type ColorCell = number;
 export const colorCellMin = 0;
 export const colorCellMax = 255;
-const colorCellTrunc = (cell: ColorCell) => {
+export const colorCellTrunc = (cell: ColorCell) => {
   return max(colorCellMin, min(trunc(cell), colorCellMax));
 };
 
@@ -62,17 +62,24 @@ const colorOverCellBlend = (
  */
 export const colorOver = (bottom: ColorRgb, top: ColorRgb) => {
 
-  const bR = bottom[colorDimR];
-  const bG = bottom[colorDimG];
-  const bB = bottom[colorDimB];
-  const bA = bottom[colorDimA];
 
   const tR = top[colorDimR];
   const tG = top[colorDimG];
   const tB = top[colorDimB];
   const tA = top[colorDimA];
 
+  if (tA >= colorCellMax) {
+    return top;
+  }
 
+  const bR = bottom[colorDimR];
+  const bG = bottom[colorDimG];
+  const bB = bottom[colorDimB];
+  const bA = bottom[colorDimA];
+
+  if (bA <= colorCellMin) {
+    return top;
+  }
 
   const oR = colorCellTrunc(colorOverCellBlend(bR / 255, tR / 255, bA / 255, tA / 255) * 255);
   const oG = colorCellTrunc(colorOverCellBlend(bG / 255, tG / 255, bA / 255, tA / 255) * 255);

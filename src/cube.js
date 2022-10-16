@@ -1,7 +1,6 @@
 import { vectorRotateZ, vectorRotateY, vectorRotateX, } from "./vector.js";
 import { vectorDimX, vectorDimY, vectorDimZ } from "./vector.js";
-import { screenHeight, screenWidth, } from "./screen.js";
-import { planeDimLen, planeDimNormalVector, planeDimO, planeDimM, planeDimN } from "./scan.js";
+import { planeDimLen, planeDimNormalVector, planeDimO, planeDimM, planeDimN, scanHeight, scanWidth } from "./scan.js";
 const { trunc, pow, } = Math;
 /**
  * 立方体6个面
@@ -48,13 +47,8 @@ const cubeFaces = [
     [[1, 0, 1], [0, 1, 0], [1, 0, 1]],
     [[1, 0, 1], [1, 0, 1], [1, 0, 1]],
 ];
-const cubeFaceColorW = [255, 255, 255, 155];
+const cubeFaceColorW = [255, 255, 255, 255];
 const cubeFaceColorB = [255, 0, 0, 255];
-/**
- * 控制扫描的精细度
- */
-const scanWidth = screenWidth;
-const scanHeight = screenHeight;
 const cubeScanFaces = cubePlanes.map((plane, faceKey) => {
     //面的法向量
     const normalVector = plane[planeDimNormalVector];
@@ -81,12 +75,12 @@ const cubeScanFaces = cubePlanes.map((plane, faceKey) => {
     const faceCellR = faceCellHalf * 0.6;
     const faceCellRPow = pow(faceCellR, 2);
     const scanYList = Array.from((function* () {
-        for (let scanY = 0; scanY < scanHeight; scanY++) {
+        for (let scanY = 0; scanY < scanHeight * cubeSize; scanY++) {
             yield scanY;
         }
     })());
     const scanXList = Array.from((function* () {
-        for (let scanX = 0; scanX < scanWidth; scanX++) {
+        for (let scanX = 0; scanX < scanWidth * cubeSize; scanX++) {
             yield scanX;
         }
     })());

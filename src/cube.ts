@@ -1,8 +1,7 @@
-import { colorDimA, ColorRgb } from "./color.js";
+import { ColorRgb } from "./color.js";
 import { vectorRotateZ, vectorRotateY, vectorRotateX, } from "./vector.js";
 import { vectorDimX, vectorDimY, vectorDimZ, Vector } from "./vector.js";
-import { cameraZ, screenHeight, screenWidth, } from "./screen.js";
-import { Scan, Plane, planeDimLen, planeDimNormalVector, planeDimO, planeDimM, planeDimN, ScanFace, ScanCell } from "./scan.js";
+import { Scan, Plane, planeDimLen, planeDimNormalVector, planeDimO, planeDimM, planeDimN, ScanFace, ScanCell, scanHeight, scanWidth } from "./scan.js";
 const { trunc, pow, } = Math;
 
 /**
@@ -72,14 +71,9 @@ const cubeFaces: [CubeFace, CubeFace, CubeFace, CubeFace, CubeFace, CubeFace] = 
   [[1, 0, 1], [1, 0, 1], [1, 0, 1]],
 ];
 
-const cubeFaceColorW: ColorRgb = [255, 255, 255, 155];
+const cubeFaceColorW: ColorRgb = [255, 255, 255, 255];
 const cubeFaceColorB: ColorRgb = [255, 0, 0, 255];
 
-/**
- * 控制扫描的精细度
- */
-const scanWidth = screenWidth;
-const scanHeight = screenHeight;
 
 const cubeScanFaces = cubePlanes.map((plane, faceKey): ScanFace => {
 
@@ -117,12 +111,12 @@ const cubeScanFaces = cubePlanes.map((plane, faceKey): ScanFace => {
   const faceCellRPow = pow(faceCellR, 2);
 
   const scanYList = Array.from((function* () {
-    for (let scanY = 0; scanY < scanHeight; scanY++) {
+    for (let scanY = 0; scanY < scanHeight * cubeSize; scanY++) {
       yield scanY;
     }
   })());
   const scanXList = Array.from((function* () {
-    for (let scanX = 0; scanX < scanWidth; scanX++) {
+    for (let scanX = 0; scanX < scanWidth * cubeSize; scanX++) {
       yield scanX;
     }
   })());

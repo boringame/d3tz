@@ -6,7 +6,7 @@ export const colorDimA = 3;
 export const colorDimLen = 4;
 export const colorCellMin = 0;
 export const colorCellMax = 255;
-const colorCellTrunc = (cell) => {
+export const colorCellTrunc = (cell) => {
     return max(colorCellMin, min(trunc(cell), colorCellMax));
 };
 export const colorEmpty = [0, 0, 0, 0];
@@ -39,14 +39,20 @@ const colorOverCellBlend = (c1, c2, a1, a2) => {
  * 遮挡
  */
 export const colorOver = (bottom, top) => {
-    const bR = bottom[colorDimR];
-    const bG = bottom[colorDimG];
-    const bB = bottom[colorDimB];
-    const bA = bottom[colorDimA];
     const tR = top[colorDimR];
     const tG = top[colorDimG];
     const tB = top[colorDimB];
     const tA = top[colorDimA];
+    if (tA >= colorCellMax) {
+        return top;
+    }
+    const bR = bottom[colorDimR];
+    const bG = bottom[colorDimG];
+    const bB = bottom[colorDimB];
+    const bA = bottom[colorDimA];
+    if (bA <= colorCellMin) {
+        return top;
+    }
     const oR = colorCellTrunc(colorOverCellBlend(bR / 255, tR / 255, bA / 255, tA / 255) * 255);
     const oG = colorCellTrunc(colorOverCellBlend(bG / 255, tG / 255, bA / 255, tA / 255) * 255);
     const oB = colorCellTrunc(colorOverCellBlend(bB / 255, tB / 255, bA / 255, tA / 255) * 255);

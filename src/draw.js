@@ -23,7 +23,7 @@ export const draw = (screenBuf, fps) => {
     for (let rowIndex = 0; rowIndex < screenBuf.length; rowIndex++) {
         const row = screenBuf[rowIndex];
         for (let colIndex = 0; colIndex < row.length; colIndex++) {
-            const color = row[colIndex];
+            const color = row[colIndex].color;
             const colorR = color[colorDimR];
             const colorG = color[colorDimG];
             const colorB = color[colorDimB];

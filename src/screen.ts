@@ -1,8 +1,8 @@
-import { ColorRgb, colorLight, colorEmpty, colorOver } from "./color.js";
+import { ColorRgb, colorLight, colorEmpty, colorOver, colorDimA, colorCellMax, colorDimR, colorDimG, colorDimB, colorCellTrunc } from "./color.js";
 import { vectorRotateY, vectorDimZ, vectorDimX, vectorDimY, vectorMin } from "./vector.js";
-import { Scan } from "./scan.js";
+import { Scan, scanWidth, scanFaceBoth, scanColorOver, scanHeight } from "./scan.js";
 
-const { trunc, } = Math;
+const { trunc, min, max, } = Math;
 
 const stageWh = 3;
 export const stageWidth = stageWh;
@@ -13,8 +13,9 @@ export const stangeHeight = stageWh;
  */
 export const cameraZ = 3;
 
+
 /**
- * 控制屏幕的尺寸
+ * 屏幕绘制尺寸
  */
 const screenWh = 256;
 export const screenWidth = screenWh;
@@ -24,22 +25,26 @@ const screenXRate = screenWidth / stageWidth;
 const screenXT = screenWidth / 2;
 const screenYRate = screenHeight / stangeHeight;
 const screenYT = screenHeight / 2;
-
+const gapYRate = screenYRate / scanHeight;
+const gapXRate = screenXRate / scanWidth;
 
 /**
  * 屏幕上的点集合
  */
-export type ScreenBuf = ColorRgb[][];
 
-/**
- * 不使用遮盖
- */
-const shootOver = true;
+export interface ScreenCell {
+  color: ColorRgb;
+  z: number;
+  on: boolean;
+}
 
-/**
- * 显示两面
- */
-const shootBoth = true;
+export const screenCellEmpty: ScreenCell = {
+  color: colorEmpty,
+  z: vectorMin,
+  on: false,
+};
+
+export type ScreenBuf = ScreenCell[][];
 
 /**
  * 将图形转换为屏幕点阵
@@ -49,11 +54,7 @@ export const shoot = (
 ): ScreenBuf => {
 
   const screenBuf: ScreenBuf = Array.from({ length: screenHeight },
-    () => Array.from({ length: screenWidth, }, () => colorEmpty)
-  );
-
-  const zBuf = Array.from({ length: screenHeight },
-    () => Array.from({ length: screenWidth, }, () => vectorMin)
+    () => Array.from({ length: screenWidth, }, () => screenCellEmpty)
   );
 
   for (const scan of scans) {
@@ -69,7 +70,7 @@ export const shoot = (
       const normalVectorZ = normalVector[vectorDimZ];
 
       //反面不显示
-      if (!shootBoth && normalVectorZ < 0) {
+      if (!scanFaceBoth && normalVectorZ < 0) {
         continue;
       }
 
@@ -91,8 +92,6 @@ export const shoot = (
         const shootX = scanX * shootRate;
         const shootY = scanY * shootRate;
 
-
-
         const screenX = trunc(shootX * screenXRate + screenXT);
         const screenY = trunc(shootY * screenYRate + screenYT);
 
@@ -104,37 +103,59 @@ export const shoot = (
           continue;
         }
 
-
-        //层级
-        const overZ = scanZ;
-        const overZLast = zBuf[screenY][screenX];
-        if (overZ < overZLast && !shootOver) {
-          continue;
-        }
-
         //计算亮度
         let color = cell.color;
         color = colorLight(color, normalVectorZ);
 
-        if (overZ > overZLast) {
-          zBuf[screenY][screenX] = overZ;
 
-          if (shootOver) {
-            const lastColor = screenBuf[screenY][screenX];
-            if (!!lastColor) {
-              color = colorOver(lastColor, color);
+        //层级
+        let overZ = scanZ;
+        let overColor = color;
+        const screenBufLast = screenBuf[screenY][screenX];
+        if (screenBufLast.on) {
+          if (scanZ < screenBufLast.z) {
+            if (scanColorOver) {
+              continue;
             }
-          }
-        } else {
-          if (shootOver) {
-            const lastColor = screenBuf[screenY][screenX];
-            if (!!lastColor) {
-              color = colorOver(color, lastColor);
+            overZ = screenBufLast.z;
+            overColor = screenBufLast.color;
+            if (scanColorOver) {
+              overColor = colorOver(color, screenBufLast.color);
+            }
+          } else {
+            if (scanColorOver) {
+              overColor = colorOver(screenBufLast.color, color);
             }
           }
         }
 
-        screenBuf[screenY][screenX] = color;
+
+        screenBuf[screenY][screenX] = {
+          on: true,
+          color: overColor,
+          z: overZ,
+        };
+
+        //填充放大的间隙空白
+        const gapRow = min(screenY + shootRate * gapYRate, screenHeight);
+        const gapCol = min(screenX + shootRate * gapXRate, screenWidth);
+        const gapColor = color;
+        for (let gapY = screenY + 1; gapY < gapRow; gapY++) {
+          for (let gapX = screenX + 1; gapX < gapCol; gapX++) {
+            const lastGap = screenBuf[gapY][gapX];
+            if (lastGap.on) {
+              continue;
+            }
+            if (overZ < lastGap.z) {
+              continue;
+            }
+            screenBuf[gapY][gapX] = {
+              on: false,
+              color: gapColor,
+              z: overZ,
+            };
+          }
+        }
 
       }
     }
