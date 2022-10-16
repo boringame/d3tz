@@ -1,41 +1,41 @@
 const { sin, cos, } = Math;
-export const pointDimX = 0;
-export const pointDimY = 1;
-export const pointDimZ = 2;
-export const pointMin = Number.MIN_SAFE_INTEGER;
-export const pointD3RotateZ = (point, deg) => {
+export const vectorDimX = 0;
+export const vectorDimY = 1;
+export const vectorDimZ = 2;
+export const vectorMin = Number.MIN_SAFE_INTEGER;
+export const vectorRotateZ = (point, deg) => {
     const degP = deg * Math.PI / 180;
     const degPSin = sin(degP);
     const degPCos = cos(degP);
-    const x = point[pointDimX];
-    const y = point[pointDimY];
-    const z = point[pointDimZ];
+    const x = point[vectorDimX];
+    const y = point[vectorDimY];
+    const z = point[vectorDimZ];
     const rsX = degPCos * x - degPSin * y;
     const rsY = degPSin * x + degPCos * y;
     const rsZ = z;
     const rsPoint = [rsX, rsY, rsZ];
     return rsPoint;
 };
-export const pointD3RotateY = (point, deg) => {
+export const vectorRotateY = (point, deg) => {
     const degP = deg * Math.PI / 180;
     const degPSin = sin(degP);
     const degPCos = cos(degP);
-    const x = point[pointDimX];
-    const y = point[pointDimY];
-    const z = point[pointDimZ];
+    const x = point[vectorDimX];
+    const y = point[vectorDimY];
+    const z = point[vectorDimZ];
     const rsX = degPCos * x + degPSin * z;
     const rsY = y;
     const rsZ = degPCos * z - degPSin * x;
     const rsPoint = [rsX, rsY, rsZ];
     return rsPoint;
 };
-export const pointD3RotateX = (point, deg) => {
+export const vectorRotateX = (point, deg) => {
     const degP = deg * Math.PI / 180;
     const degPSin = sin(degP);
     const degPCos = cos(degP);
-    const x = point[pointDimX];
-    const y = point[pointDimY];
-    const z = point[pointDimZ];
+    const x = point[vectorDimX];
+    const y = point[vectorDimY];
+    const z = point[vectorDimZ];
     const rsX = x;
     const rsY = degPCos * y - degPSin * z;
     const rsZ = degPCos * z + degPSin * y;

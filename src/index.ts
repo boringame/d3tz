@@ -1,5 +1,6 @@
-import { calc } from "./calc.js";
+import { shoot } from "./screen.js";
 import { draw } from "./draw.js";
+import { cubeScan } from "./cube.js";
 
 
 const { trunc, } = Math;
@@ -17,6 +18,12 @@ const main = async () => {
   let countDeg = 0;
   const timeDegEnable = true;
 
+  const scans = [cubeScan(), cubeScan()];
+  for (const [scan, i] of scans.map((scan, i) => [scan, i] as const)) {
+    scan.x = -0.5 + i * 2;
+    scan.z = -3 * i;
+  }
+
   for (; ;) {
     const now = Date.now();
     const timeDeg = (now - timeBegin) / frameUnit * frameDeg;
@@ -25,7 +32,11 @@ const main = async () => {
     const fps = trunc(1000 / timeSub);
     countDeg += frameDeg;
 
-    const screenBuf = calc(timeDegEnable ? timeDeg : countDeg);
+    for (const scan of scans) {
+      scan.rotateY = timeDegEnable ? timeDeg : countDeg;
+    }
+
+    const screenBuf = shoot(scans);
 
     draw(screenBuf, fps);
 

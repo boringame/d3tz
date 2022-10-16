@@ -1,5 +1,5 @@
 
-const { sqrt, trunc, min, max, } = Math;
+const { trunc, min, max, } = Math;
 
 
 export const colorDimR = 0;
@@ -28,7 +28,6 @@ const colorLightCell = (c: ColorCell, nvz: number) => {
 
 /**
  * 光照
- * Brightness = 0.3 * R + 0.6 * G + 0.1 * B
  */
 export const colorLight = (color: ColorRgb, nvz: number) => {
 
