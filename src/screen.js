@@ -19,6 +19,7 @@ const screenXRate = screenWidth / stageWidth;
 const screenXT = screenWidth / 2;
 const screenYRate = screenHeight / stangeHeight;
 const screenYT = screenHeight / 2;
+const gapDis = true;
 const gapYRate = screenYRate / scanHeight;
 const gapXRate = screenXRate / scanWidth;
 export const screenCellEmpty = {
@@ -92,23 +93,25 @@ export const shoot = (scans) => {
                     z: overZ,
                 };
                 //填充放大的间隙空白
-                const gapRow = min(screenY + shootRate * gapYRate, screenHeight);
-                const gapCol = min(screenX + shootRate * gapXRate, screenWidth);
-                const gapColor = color;
-                for (let gapY = screenY + 1; gapY < gapRow; gapY++) {
-                    for (let gapX = screenX + 1; gapX < gapCol; gapX++) {
-                        const lastGap = screenBuf[gapY][gapX];
-                        if (lastGap.on) {
-                            continue;
+                if (!gapDis) {
+                    const gapRow = min(screenY + shootRate * gapYRate, screenHeight);
+                    const gapCol = min(screenX + shootRate * gapXRate, screenWidth);
+                    const gapColor = color;
+                    for (let gapY = screenY + 1; gapY < gapRow; gapY++) {
+                        for (let gapX = screenX + 1; gapX < gapCol; gapX++) {
+                            const lastGap = screenBuf[gapY][gapX];
+                            if (lastGap.on) {
+                                continue;
+                            }
+                            if (overZ < lastGap.z) {
+                                continue;
+                            }
+                            screenBuf[gapY][gapX] = {
+                                on: false,
+                                color: gapColor,
+                                z: overZ,
+                            };
                         }
-                        if (overZ < lastGap.z) {
-                            continue;
-                        }
-                        screenBuf[gapY][gapX] = {
-                            on: false,
-                            color: gapColor,
-                            z: overZ,
-                        };
                     }
                 }
             }
